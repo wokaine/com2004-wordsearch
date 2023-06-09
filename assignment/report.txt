@@ -1,0 +1,58 @@
+# Word Search assignment report
+
+## Feature Extraction (Max 200 Words)
+
+For the feature extraction function, I took a simple PCA approach similar to that seen in the labs. 
+The function takes the full training data from the model and performs PCA dimensionality reduction 
+to the required 20 dimensions, the function does no further feature reduction. Once the eigenvectors 
+are acquired we take the input data and centre it using the mean of the training data, dot product is 
+then applied to this and the eigenvectors in order to produce the PCA data. The old training data is 
+necessary because we need the mean for centring, as the function is applied on the training data and 
+the test data also. Upon reflection, maybe an additional feature vector reduction process could've 
+been implemented, but I am happy with the data being just 20 dimensions. Upon processing, the model
+contains the training data, the training labels and the reduced training data. These are the only 
+things required as we are using a non-parametric approach.
+
+## Letter Classifier (Max 200 Words)
+
+The classifier has two implementations: one is a 1 Nearest Neighbour algorithm as seen in the lab 
+classes that uses a cosine distance function, the other is a k Nearest Neighbour algorithm that uses 
+a Minkowski distance function. I chose the Minkowski distance function because it is a generalisation 
+of both the Manhattan and Euclidean distance, where p = 1 and 2 respectively. By default, I have set 
+k to 3 and the Minkowski distance is Euclidean. The 1 Nearest Neighbour produces good overall results 
+for both high and low quality, the k Nearest Neighbour however produces excellent results for high 
+quality and disappointing results for the low quality data, even lower than 1 Nearest Neighbour. 
+This drop in score is likely because of the Euclidean distance function which is highly susceptible 
+to changes in quality of the images, whereas cosine isn't as much.
+
+## Word Finder (Max 200 Words)
+
+The word finder works based off of a recursive approach - each direction (i.e., horizontally, vertically, diagonal)
+has a function that loops through the words, rows and columns of the array. In each of these functions is their 
+respective "start" function, which checks whether we are able to search in a cardinal direction without it 
+causing an out of bounds error. If the search is within the limits, then we can check in that direction. 
+In total there are 8 possible directions we can search (up, down, left, right, up right, up left, down right, down left), 
+and each function will check if the letter is a match and if so it will increase the "score" of the word we are 
+searching for, we can overwrite the coordinates if we find a guess with a better score. The two criteria for finding 
+a "correct word" are: first & last letter must be correct and up to 3 letters can be incorrect. The "word score" 
+means that we can at least try and make a guess - particularly for the low quality data. Some guesses may be incorrect, 
+but at least we tried to guess rather than leaving it at 0%. 
+
+## Performance
+My percentage correctness scores (to 1 decimal place) for the development data are as
+
+NN:
+Clean data:
+- Percentage Letters Correct: 99.3%
+- Percentage Words Correct: 97.2%
+Noisy data:
+- Percentage Letters Correct: 51.0%
+- Percentage Words Correct: 22.2%
+
+3NN:
+Clean data:
+- Percentage Letters Correct: 99.7%
+- Percentage Words Correct: 100.0%
+Noisy data:
+- Percentage Letters Correct: 46.0%
+- Percentage Words Correct: 13.9%
